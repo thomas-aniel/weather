@@ -6,14 +6,20 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.yaml.snakeyaml.Yaml;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -28,7 +34,9 @@ import io.restassured.response.Response;
 public class WeatherServiceIT {
 	private static WireMockServer wiremockServer = createWiremockServer();
 	
-	private final static String CITY = "xxx";
+	private final static String CITY = "Mountain View";
+	
+	private final static JdbcDataSource h2Datasource = setupDataSource();
 	
 	@BeforeAll
 	public static void setup() {
@@ -43,6 +51,13 @@ public class WeatherServiceIT {
 	@BeforeEach
 	public void clearWiremock() {
 		wiremockServer.resetAll();
+	}
+	
+	@AfterEach
+	public void clearDatabase() throws SQLException {
+		try (Connection connection = h2Datasource.getConnection()) {
+			connection.createStatement().execute("DELETE FROM weather");
+		}
 	}
 	
 	@Test
@@ -68,8 +83,18 @@ public class WeatherServiceIT {
 		String country = jsonPath.get("country");
 		
 		Assertions.assertEquals(new BigDecimal("282.55"), temperature);
-		Assertions.assertEquals("xxx", city);
+		Assertions.assertEquals(CITY, city);
 		Assertions.assertEquals("US", country);
+
+		// verify database
+		try (Connection connection = h2Datasource.getConnection()) {
+			ResultSet weatherEntities = connection.createStatement().executeQuery("SELECT * FROM weather");
+			weatherEntities.first();
+			Assertions.assertEquals(CITY, weatherEntities.getString("city"));
+			Assertions.assertEquals("US", weatherEntities.getString("country"));
+			Assertions.assertEquals(new BigDecimal("282.55"), weatherEntities.getBigDecimal("temperature"));
+			Assertions.assertFalse(weatherEntities.next());
+		}
 	}
 
 	@Test
@@ -86,6 +111,26 @@ public class WeatherServiceIT {
 			.get("http://localhost:8080/weather");
 		
 		Assertions.assertEquals(500, response.getStatusCode());
+	}
+	
+	private static JdbcDataSource setupDataSource() {
+		JdbcDataSource h2Datasource;
+		
+		try {
+			// get DB URL from yaml
+			Map<String, Object> yamlMap = new Yaml().load(readFileFromClasspath("application.yml"));
+			Map<String, Object> springMap = (Map<String, Object>) yamlMap.get("spring");
+			Map<String, String> datasourceMap = (Map<String, String>) springMap.get("datasource");
+			String dbUrl = datasourceMap.get("url");
+			
+			h2Datasource = new JdbcDataSource();
+			h2Datasource.setUrl(dbUrl);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+		return h2Datasource;
 	}
 	
 	private static String readFileFromClasspath(String relativePath) throws URISyntaxException, IOException {
