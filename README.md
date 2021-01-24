@@ -8,6 +8,10 @@ The application is a normal Spring Boot application, so it can be started using 
 The directory src/test/resources has an example application.yml that is used for integration tests and can be used as a starting point to
 start the application. Just add the application.yml to the classpath.
 
+I added `initialization-mode: always` to the application yaml, so that the database is always created. I also put H2 and Postgres
+drivers into the deployed jar. Personally I would prefer to do without these things, but they make it easier.
+
+
 ## Notes
 - the package name com.assignment is a bit strange, but I assume that it's for a fictitious assignment company, so I left as it is
 - from the existing pom.xml I understand that the database used is Postgres. I wanted to use it for integration tests, as it would be better to
