@@ -10,8 +10,8 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.assignment</groupId>
-	<artifactId>coding-dojo-spring-boot</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>weather</artifactId>
+	<version>1.0</version>
 	<name>coding-dojo-spring-boot</name>
 	<description>Spring Boot Coding Dojo</description>
 
@@ -54,11 +54,19 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>postgresql</groupId>
+			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>9.1-901-1.jdbc4</version>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
 	<profiles>
 		<profile>
