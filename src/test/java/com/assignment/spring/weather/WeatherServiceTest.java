@@ -39,7 +39,7 @@ public class WeatherServiceTest {
 	private Sys mockSys;
 	
 	@Mock
-	private OpenWeatherConfiguration mockConfiguration;
+	private OpenWeatherProperties mockConfiguration;
 
 	@AfterEach
 	void tearDown() {

@@ -1,18 +1,20 @@
 package com.assignment.spring.weather;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.assignment.spring.weather.openweather.OpenWeatherResponse;
 
+@Service
 class WeatherService {
     private RestTemplate restTemplate;
 
     private WeatherRepository weatherRepository;
     
-    private OpenWeatherConfiguration configuration;
+    private OpenWeatherProperties configuration;
 
-	WeatherService(RestTemplate restTemplate, WeatherRepository weatherRepository, OpenWeatherConfiguration configuration) {
+	WeatherService(RestTemplate restTemplate, WeatherRepository weatherRepository, OpenWeatherProperties configuration) {
 		this.restTemplate = restTemplate;
 		this.weatherRepository = weatherRepository;
 		this.configuration = configuration;

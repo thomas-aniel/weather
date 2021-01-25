@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix="app.open-weather")
-class OpenWeatherConfiguration {
+class OpenWeatherProperties {
 	private String url;
 
 	public String getUrl() {
