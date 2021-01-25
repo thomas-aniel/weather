@@ -17,8 +17,6 @@ drivers into the deployed jar. Personally I would prefer to do without these thi
 - from the existing pom.xml I understand that the database used is Postgres. I wanted to use it for integration tests, as it would be better to
 use an environment as similar as possible to production. However, I don't know if there is an easy way to provide Postgres to the build process
 to the current build environment (is there an existing Postgres? Docker), so I used H2
-- it would be nice to check, in the integration tests, that the records are saved properly. However, Spring Data seems to have a problem with H2
-sequences using a file URL, so I didn't manage to verify record insertion in the database
 - the flow is very simple. Aside from the happy flow, there only seem to be error conditions. So I only added a test for the case when
 Open Weather fails in the integration tests
 - nothing is said about the Java version, although the pom has a variable seeming to indicate 11. I use Java 14,

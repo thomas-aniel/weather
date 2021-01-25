@@ -9,6 +9,7 @@ spring:
          max-pool-size: 10
       platform: h2
       # use H2 in file mode with auto server to allow the integration tests to connect
+      # Assuming current directory is project root
       url: jdbc:h2:./target/testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE;AUTO_SERVER_PORT=9090
       # always run schema.sql
       initialization-mode: always
